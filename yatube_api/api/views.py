@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
-from rest_framework.response import Response
 
 from posts.models import Comment, Group, Post
 from .serializers import CommentSerializer, GroupSerializer, PostSerializer
@@ -19,12 +18,12 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         if self.request.user != serializer.instance.author:
             raise PermissionDenied('Изменение чужого контента запрещено.')
-        super(PostViewSet, self).perform_update(serializer)
+        super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         if self.request.user != instance.author:
             raise PermissionDenied('Удаление чужого контента запрещено.')
-        super(PostViewSet, self).perform_destroy(instance)
+        super().perform_destroy(instance)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -51,10 +50,9 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         if self.request.user != serializer.instance.author:
             raise PermissionDenied('Изменение чужого комментария запрещено.')
-        super(CommentViewSet, self).perform_update(serializer)
-        return Response(serializer.data)
+        super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         if self.request.user != instance.author:
             raise PermissionDenied('Удаление чужого комментария запрещено.')
-        return Response(instance)
+        instance.delete()
